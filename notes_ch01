@@ -1,0 +1,98 @@
+
+
+The first Unix widely used
+outside Bell Labs was Unix System, Sixth Edition, more commonly called V6.
+
+
+
+In 1977, Bell Labs
+released a combination of these variants into a single system, Unix System III; in 1982,
+AT&T released System V.1
+
+
+
+The simplicity of Unix’s design, coupled with the fact that it was distributed with
+source code, led to further development at external organizations. The most influential of
+these contributors was the University of California at Berkeley. Variants of Unix from
+Berkeley are known as Berkeley Software Distributions, or BSD. 
+
+
+
+
+Today, thanks to BSD’s
+permissive license, development of BSD continues with the Darwin, FreeBSD, NetBSD,
+and OpenBSD systems.
+In the 1980s and 1990s, multiple workstation and server companies introduced their
+own commercial versions of Unix.These systems were based on either an AT&T or a
+Berkeley release and supported high-end features developed for their particular hardware
+architecture.Among these systems were Digital’s Tru64, Hewlett Packard’s HP-UX, IBM’s
+AIX, Sequent’s DYNIX/ptx, SGI’s IRIX, and Sun’s Solaris & SunOS.
+
+
+The original elegant design of the Unix system, along with the years of innovation
+and evolutionary improvement that followed, has resulted in a powerful, robust, and stable
+operating system.A handful of characteristics of Unix are at the core of its strength. First,
+Unix is simple:Whereas some operating systems implement thousands of system calls and
+have unclear design goals, Unix systems implement only hundreds of system calls and
+have a straightforward, even basic, design. Second, in Unix, everything is a file.
+2 This simplifies the manipulation of data and devices into a set of core system calls: open(), read(),
+write(), lseek(), and close().Third, the Unix kernel and related system utilities are
+written in C—a property that gives Unix its amazing portability to diverse hardware
+architectures and accessibility to a wide range of developers. Fourth, Unix has fast process
+creation time and the unique fork() system call. Finally, Unix provides simple yet robust
+interprocess communication (IPC) primitives that, when coupled with the fast process
+creation time, enable the creation of simple programs that do one thing and do it well.These
+single-purpose programs can be strung together to accomplish tasks of increasing complexity. 
+
+Unix systems thus exhibit clean layering, with a strong separation between policy
+and mechanism.
+
+
+
+
+
+These contexts represent the breadth of the kernel’s activities. In fact, in Linux, we can
+generalize that each processor is doing exactly one of three things at any given moment:
+
+
+n In user-space, executing user code in a process
+
+n In kernel-space, in process context, executing on behalf of a specific process
+
+In kernel-space, in interrupt context, not associated with a process, handling an
+interrupt
+
+
+
+
+
+a Unix kernel is typically a monolithic static binary.
+That is, it exists as a single, large, executable image that runs in a single address space.
+Unix systems typically require a system with a paged memory-management unit
+(MMU); this hardware enables the system to enforce memory protection and to provide a
+unique virtual address space to each process. 
+
+
+
+
+
+Monolithic Kernel Versus Microkernel Designs
+
+The Windows NT
+kernel (on which Windows XP, Vista, and 7 are based) and Mach (on which part of Mac OS X
+is based) are examples of microkernels. Neither Windows NT nor Mac OS X run any microkernel 
+servers in user-space in their latest iteration, 
+
+defeating the primary purpose of microkernel design altogether.
+
+
+
+
+
+
+
+
+
+
+
+
