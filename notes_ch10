@@ -1,4 +1,8 @@
 
+->->->->->->->->->->->->
+atomicity and ordering
+->->->->->->->->->->->->
+
 
 When dealing with synchronization between multiple processors or with hardware devices, 
 it is sometimes a requirement that memory-reads (loads) and memory-writes
@@ -11,5 +15,27 @@ processor can reorder reads and writes4 for performance reasons.Thankfully, all 
 that do reorder reads or writes provide machine instructions to enforce ordering requirements. 
 It is also possible to instruct the compiler not to reorder instructions around a
 given point.These instructions are called barriers.
+
+
+->->->->->->->->->->->->->->->
+memory and compiler barrier
+->->->->->->->->->->->->->->->
+
+
+The macros smp_rmb(), smp_wmb(), smp_mb(), and smp_read_barrier_depends()
+provide a useful optimization. On SMP kernels they are defined as the usual memory
+barriers, whereas on UP kernels they are defined only as a compiler barrier.You can use
+these SMP variants when the ordering constraints are specific to SMP systems.
+The barrier() method prevents the compiler from optimizing loads or stores across
+the call.The compiler knows not to rearrange stores and loads in ways that would change
+the effect of the C code and existing data dependencies. It does not have knowledge,
+however, of events that can occur outside the current context. For example, the compiler
+cannot know about interrupts that might read the same data you are writing. 
+
+
+For this reason, you might want to ensure a store is issued before a load, for example.The previous
+memory barriers also function as compiler barriers, but a compiler barrier is much lighter
+in weight than a memory barrier. Indeed, a compiler barrier is practically free, because it
+simply prevents the compiler from possibly rearranging things.
 
 
