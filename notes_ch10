@@ -1,12 +1,15 @@
 
 
-When dealing with synchronization between multiple processors or with hardware devices, it is sometimes a requirement that memory-reads (loads) and memory-writes
+When dealing with synchronization between multiple processors or with hardware devices, 
+it is sometimes a requirement that memory-reads (loads) and memory-writes
 (stores) issue in the order specified in your program code.When talking with hardware,
-you often need to ensure that a given read occurs before another read or write.Additionally, on symmetrical multiprocessing systems, it might be important for writes to appear in
+you often need to ensure that a given read occurs before another read or write.Additionally, 
+on symmetrical multiprocessing systems, it might be important for writes to appear in
 the order that your code issues them (usually to ensure subsequent reads see the data in
 the same order). Complicating these issues is the fact that both the compiler and the
 processor can reorder reads and writes4 for performance reasons.Thankfully, all processors
-that do reorder reads or writes provide machine instructions to enforce ordering requirements. It is also possible to instruct the compiler not to reorder instructions around a
+that do reorder reads or writes provide machine instructions to enforce ordering requirements. 
+It is also possible to instruct the compiler not to reorder instructions around a
 given point.These instructions are called barriers.
 
 
