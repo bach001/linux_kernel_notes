@@ -63,3 +63,19 @@ Querying
 
 
 
+----------------------------------------
+
+RESET_HEAP
+
+Set up video mode
+
+Set up the Interrupt Descriptor Table
+
+Set up Global Descriptor Table
+
+Actual transition into protected mode
+
+
+
+
+
