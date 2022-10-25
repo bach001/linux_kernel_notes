@@ -1,0 +1,18 @@
+
+
+What is memblock?
+
+When programming in kernel space, you cannot use the C standard library memory allocation 
+functions available in user space, such as malloc, free, calloc, realloc, or reallocarray.[1] 
+There are kernel space equivalents, such as kmalloc or kzalloc, kfree, kcalloc, krealloc_array, 
+krealloc,[2] and more. However, these memory allocators are set up during the booting process. 
+In the period of time before these allocators are available, the system still needs to allocate 
+memory. During that period of time, a specialized allocator called memblock is used to allocate memory.[3]
+
+memblock views the system memory as a collection of contiguous regions. memblock is made up of 
+memblock types, which are themselves made up of multiple memory regions. There are several 
+structures and functions for working with memblock.[4]
+
+
+https://blogs.oregonstate.edu/usageoptions/2022/04/14/linux-kernel-series-memblock/
+
