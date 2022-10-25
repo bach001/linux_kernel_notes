@@ -1,0 +1,58 @@
+
+
+Before we can move to the native Intel64 Long Mode, the kernel must switch the CPU into protected mode.
+
+
+
+What is protected mode? 
+
+
+
+Memory management in Protected mode is divided into two, almost independent parts:
+
+    Segmentation
+    Paging
+
+
+
+Memory segmentation was completely redone in protected mode. 
+There are no 64 Kilobyte fixed-size segments. Instead, the size and location of each segment 
+is described by an associated data structure called the Segment Descriptor. 
+
+These segment descriptors are stored in a data structure called the Global Descriptor Table (GDT).
+
+The GDT is a structure which resides in memory. It has no fixed place in the memory, 
+so its address is stored in the special GDTR register. Later we will see how the GDT is 
+loaded in the Linux kernel code. There will be an operation for loading it from memory, something like:
+
+lgdt gdt
+
+
+
+
+The algorithm for the transition from real mode into protected mode is:
+
+    Disable interrupts
+    Describe and load the GDT with the lgdt instruction
+    Set the PE (Protection Enable) bit in CR0 (Control Register 0)
+    Jump to protected mode code
+
+
+
+
+Copying boot parameters into the "zeropage"
+
+Console initialization
+
+Heap initialization
+
+CPU validation
+
+Memory detection
+
+Keyboard initialization
+
+Querying
+
+
+
