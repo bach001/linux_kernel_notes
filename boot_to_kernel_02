@@ -8,6 +8,13 @@ What is protected mode?
 
 
 
+Protected mode brought many changes, but the main one is the difference in memory management. 
+The 20-bit address bus was replaced with a 32-bit address bus. It allowed access to 4 
+Gigabytes of memory vs the 1 Megabyte in Real mode. Also, paging support was added, 
+
+
+
+
 Memory management in Protected mode is divided into two, almost independent parts:
 
     Segmentation
