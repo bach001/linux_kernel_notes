@@ -1,0 +1,146 @@
+
+
+As soon as you press the magical power button on your laptop or desktop computer, 
+it starts working. The motherboard sends a signal to the power supply device. After 
+receiving the signal, the power supply provides the proper amount of electricity to 
+the computer. Once the motherboard receives the power good signal, 
+it tries to start the CPU. The CPU resets all leftover data in its registers and sets 
+predefined values for each of them.
+
+
+The processor starts working in real mode.
+
+
+
+The CS register consists of two parts: the visible segment selector and the hidden base address. 
+While the base address is normally formed by multiplying the segment selector value by 16, 
+during a hardware reset the segment selector in the CS register is loaded with 0xf000 and 
+the base address is loaded with 0xffff0000. The processor uses this special base address until CS changes.
+
+
+The starting address is formed by adding the base address to the value in the EIP register:
+
+>>> 0xffff0000 + 0xfff0
+'0xfffffff0'
+
+
+We get 0xfffffff0, which is 16 bytes below 4GB. This point is called the reset vector. 
+It's the memory location at which the CPU expects to find the first instruction to 
+execute after reset. It contains a jump (jmp) instruction that usually points to the 
+BIOS (Basic Input/Output System) entry point.
+
+
+
+Now the BIOS starts. After initializing and checking the hardware, 
+the BIOS needs to find a bootable device. 
+
+A boot order is stored in the BIOS configuration, controlling which devices the BIOS 
+attempts to boot from. When attempting to boot from a hard drive, 
+the BIOS tries to find a boot sector. On hard drives partitioned with an MBR partition layout, 
+the boot sector is stored in the first 446 bytes of the first sector, 
+where each sector is 512 bytes. The final two bytes of the first sector are 0x55 and 0xaa, 
+which designates to the BIOS that this device is bootable.
+
+
+
+
+In general, real mode's memory map is as follows:
+
+0x00000000 - 0x000003FF - Real Mode Interrupt Vector Table
+0x00000400 - 0x000004FF - BIOS Data Area
+0x00000500 - 0x00007BFF - Unused
+0x00007C00 - 0x00007DFF - Our Bootloader
+0x00007E00 - 0x0009FFFF - Unused
+0x000A0000 - 0x000BFFFF - Video RAM (VRAM) Memory
+0x000B0000 - 0x000B7777 - Monochrome Video Memory
+0x000B8000 - 0x000BFFFF - Color Video Memory
+0x000C0000 - 0x000C7FFF - Video ROM BIOS
+0x000C8000 - 0x000EFFFF - BIOS Shadow Area
+0x000F0000 - 0x000FFFFF - System BIOS
+
+
+
+At the start of execution, the BIOS is not in RAM, but in ROM.
+
+
+
+
+
+
+
+Continuing from before, now that the BIOS has chosen a boot device and transferred control to 
+the boot sector code, execution starts from boot.img. Its code is very simple, 
+due to the limited amount of space available. It contains a pointer which is used to 
+jump to the location of GRUB 2's core image. The core image begins with diskboot.img, 
+which is usually stored immediately after the first sector in the unused space before 
+the first partition. The above code loads the rest of the core image, which contains 
+GRUB 2's kernel and drivers for handling filesystems, into memory. After loading the 
+rest of the core image, it executes the grub_main function.
+
+The grub_main function initializes the console, gets the base address for modules, 
+sets the root device, loads/parses the grub configuration file, loads modules, etc. 
+At the end of execution, the grub_main function moves grub to normal mode.
+
+
+
+
+
+
+
+
+As we can see in the kernel boot protocol, memory will be mapped as follows after loading the kernel:
+
+         | Protected-mode kernel  |
+100000   +------------------------+
+         | I/O memory hole        |
+0A0000   +------------------------+
+         | Reserved for BIOS      | Leave as much as possible unused
+         ~                        ~
+         | Command line           | (Can also be below the X+10000 mark)
+X+10000  +------------------------+
+         | Stack/heap             | For use by the kernel real-mode code.
+X+08000  +------------------------+
+         | Kernel setup           | The kernel real-mode code.
+         | Kernel boot sector     | The kernel legacy boot sector.
+       X +------------------------+
+         | Boot loader            | <- Boot sector entry point 0x7C00
+001000   +------------------------+
+         | Reserved for MBR/BIOS  |
+000800   +------------------------+
+         | Typically used by MBR  |
+000600   +------------------------+
+         | BIOS use only          |
+000000   +------------------------+
+
+
+
+The bootloader has now loaded the Linux kernel into memory, filled the header fields, 
+and then jumped to the corresponding memory address. We now move directly to the kernel setup code.
+
+
+The Beginning of the Kernel Setup Stage
+
+
+Aligning the Segment Registers 
+
+
+Stack Setup
+
+BSS Setup
+
+
+Jump to main
+
+
+
+
+
+
+
+
+
+
+
+
+
+
