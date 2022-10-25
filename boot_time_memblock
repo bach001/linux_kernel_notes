@@ -1,4 +1,23 @@
 
+Boot time memory management
+
+https://docs.kernel.org/core-api/boot-time-mm.html
+
+
+A specialized allocator called memblock performs the boot time memory management. 
+The architecture specific initialization must set it up in setup_arch() and tear it 
+down in mem_init() functions.
+
+
+As the system boot progresses, the architecture specific mem_init() function frees 
+all the memory to the buddy page allocator.
+
+
+Unless an architecture enables CONFIG_ARCH_KEEP_MEMBLOCK, the memblock data structures 
+(except “physmem”) will be discarded after the system initialization completes.
+
+
+
 
 What is memblock?
 
