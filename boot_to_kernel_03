@@ -1,0 +1,48 @@
+
+
+As you may remember, the entry point of the Linux kernel is the start_kernel function 
+defined in the main.c source code file. This function is executed at the address stored 
+in LOAD_PHYSICAL_ADDR. and depends on the CONFIG_PHYSICAL_START kernel configuration option, 
+which is 0x1000000 by default:
+
+
+
+Page Table Initialization
+
+Before the kernel decompressor can look for a random memory range to decompress 
+and load the kernel to, the identity mapped page tables should be initialized. 
+If the bootloader used the 16-bit or 32-bit boot protocol, we already have page 
+tables. But, there may be problems if the kernel decompressor selects a memory 
+range which is valid only in a 64-bit context. That's why we need to build new 
+identity mapped page tables.
+
+
+
+
+
+In the previous part, we followed the transition to long mode and jumped to the 
+kernel decompressor entry point - the extract_kernel function. The randomization 
+stuff begins with a call to this function:
+
+
+
+
+
+Avoiding Reserved Memory Ranges
+
+After the stuff related to identity page tables is initilized, we can choose a random 
+memory location to extract the kernel image to. But as you may have guessed, 
+we can't just choose any address. There are certain reseved memory regions 
+which are occupied by important things like the initrd and the kernel command 
+line which must be avoided. The mem_avoid_init function will help us do this:
+
+
+
+
+Physical address randomization
+
+
+Virtual address randomization
+
+
+
