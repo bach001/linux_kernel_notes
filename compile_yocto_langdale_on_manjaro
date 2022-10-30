@@ -1,0 +1,124 @@
+
+
+# first of all, yocto can check internet connectivity and issue warning, 
+switching to another online free ssr and install shadowsocksr-cli to make sure network connection is stable
+
+
+
+# ALL_PROXY=socks5://127.0.0.1:2080 git clone -b langdale git://git.yoctoproject.org/poky.git
+
+
+# source poky/oe-init-build-env
+
+
+# bitbake core-image-x11
+
+MACHINE ?= "qemuarm64"
+
+##1 error
+
+
+ERROR: Variable BB_ENV_EXTRAWHITE has been renamed to BB_ENV_PASSTHROUGH_ADDITIONS
+ERROR: Variable BB_ENV_EXTRAWHITE from the shell environment has been renamed to BB_ENV_PASSTHROUGH_ADDITIONS
+ERROR: Exiting to allow enviroment variables to be corrected
+
+
+fix:
+
+You probably need to exit the shell and then restart it andre-initialize 
+your environment (with oe-init-build-env), as itcontains the obsolete variable.
+https://community.nxp.com/t5/i-MX-Processors/Yocto-Kirkstone-LF-5-15-32-2-0-0-Fail-to-bitbake-imx-image/m-p/1505130
+
+
+
+##2 error
+
+{standard input}: Assembler messages:
+| {standard input}: Error: open CFI at the end of file; missing .cfi_endproc directive
+| g++: fatal error: Killed signal terminated program cc1plus
+| compilation terminated.
+
+fix: just continue, but linux killed the compiling process several times
+
+
+dmesg | grep Out
+
+[41690.475774] Out of memory: Killed process 1688 (chromium) total-vm:1186277176kB, anon-rss:10368kB, file-rss:0kB, shmem-rss:1084kB, UID:1000 pgtables:1384kB oom_score_adj:300
+[41695.360697] Out of memory: Killed process 219355 (chromium) total-vm:1185108156kB, anon-rss:59856kB, file-rss:0kB, shmem-rss:336kB, UID:1000 pgtables:1168kB oom_score_adj:300
+[41715.044178] Out of memory: Killed process 218609 (chromium) total-vm:1185085312kB, anon-rss:34716kB, file-rss:0kB, shmem-rss:296kB, UID:1000 pgtables:1096kB oom_score_adj:300
+[41761.328430] Out of memory: Killed process 2134345 (cc1plus) total-vm:1263420kB, anon-rss:1130640kB, file-rss:0kB, shmem-rss:0kB, UID:1000 pgtables:2388kB oom_score_adj:200
+[50924.048733] Out of memory: Killed process 2595085 (rustc) total-vm:1612908kB, anon-rss:810324kB, file-rss:0kB, shmem-rss:0kB, UID:1000 pgtables:2852kB oom_score_adj:200
+[52494.918757] Out of memory: Killed process 2924283 (cc1plus) total-vm:1783944kB, anon-rss:1571064kB, file-rss:0kB, shmem-rss:0kB, UID:1000 pgtables:3424kB oom_score_adj:200
+
+
+https://stackoverflow.com/questions/726690/what-killed-my-process-and-why
+https://unix.stackexchange.com/questions/136291/will-linux-start-killing-my-processes-without-asking-me-if-memory-gets-short
+https://askubuntu.com/questions/709336/how-to-find-out-why-process-was-killed-on-server
+
+
+fix:
+
+## add swap file
+
+dd if=/dev/zero of=/swapfile bs=1M count=512 status=progress
+sudo dd if=/dev/zero of=/swapfile bs=1M count=512 status=progress
+sudo chmod 0600 /swapfile
+sudo mkswap -U clear /swapfile
+sudo swapon /swapfile
+
+
+
+## reduce swappiness
+
+sudo sysctl -w vm.swappiness=10
+sudo sysctl -w vm.vfs_cache_pressure=120
+
+
+
+## check zswap is enabled
+
+grep -R . /sys/module/zswap/parameters
+
+
+
+# rerun bitbake core-image-x11
+
+there are linking error undefined reference
+
+fix: bitbake -c cleansstate gcc
+
+
+
+# again run bitbake core-image-x11 success
+
+
+
+bitbake core-image-x11
+WARNING: Host distribution "manjaro" has not been validated with this version of the build system; you may possibly experience unexpected failures. It is recommended that you use a tested distribution.
+Loading cache: 100% |##################################################################################| Time: 0:00:00
+Loaded 1661 entries from dependency cache.
+NOTE: Resolving any missing task queue dependencies
+
+Build Configuration:
+BB_VERSION           = "2.2.0"
+BUILD_SYS            = "x86_64-linux"
+NATIVELSBSTRING      = "universal"
+TARGET_SYS           = "aarch64-poky-linux"
+MACHINE              = "qemuarm64"
+DISTRO               = "poky"
+DISTRO_VERSION       = "4.1"
+TUNE_FEATURES        = "aarch64 armv8a crc cortexa57"
+TARGET_FPU           = ""
+meta                 
+meta-poky            
+meta-yocto-bsp       = "langdale:6b9db5a99bf0fab47219d4648f4663c4397ac87f"
+
+Initialising tasks: 100% |#############################################################################| Time: 0:00:02
+Sstate summary: Wanted 638 Local 0 Mirrors 0 Missed 638 Current 1625 (0% match, 71% complete)
+NOTE: Executing Tasks
+NOTE: Tasks Summary: Attempted 5555 tasks of which 4849 didn't need to be rerun and all succeeded.
+
+Summary: There was 1 WARNING message.
+
+
+
