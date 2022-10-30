@@ -1,0 +1,135 @@
+
+# some unimportant info about yocto
+
+the meaning of yocto  from google search which is from oxford dictionary
+
+(used in units of measurement) denoting a factor of 10−24.
+    
+
+the meaing of poky from wiki https://en.wikipedia.org/wiki/Pocky
+
+Pocky (ポッキー, Pokkī, Japanese pronunciation: [poꜜkkiː] (listen)) /ˈpɒki/ is a Japanese sweet 
+snack food produced by the Ezaki Glico food company. Pocky was first sold in 1966,[1] 
+and was invented by Yoshiaki Koma.[2] It consists of coated biscuit sticks. 
+
+It was named after the Japanese onomatopoeic word pokkiri (ポッキリ), 
+which is supposed to resemble the sound of the snack being cracked.[3] 
+
+
+from https://www.weblio.jp/content/%E3%83%9D%E3%83%83%E3%82%AD%E3%83%AA
+
+ぽっきり
+
+【一】［副］堅い物などが不意に折れる音や、そのさまを表す語。「鉛筆の芯(しん)が—（と）折れる」
+
+【二】［接尾］数量を表す語に付いて、ちょうどそれだけと限定する意を表す。「1000円—しかない」
+
+
+# manjaro info
+
+Sikaris 22.0.0
+
+
+Operating System: Manjaro Linux
+KDE Plasma Version: 5.25.5
+KDE Frameworks Version: 5.98.0
+Qt Version: 5.15.6
+Kernel Version: 5.19.16-2-MANJARO (64-bit)
+Graphics Platform: X11
+Processors: 8 × Intel® Core™ i5-8250U CPU @ 1.60GHz
+Memory: 7.7 GiB of RAM
+Graphics Processor: Mesa Intel® UHD Graphics 620
+
+
+
+
+# using mobile disk because it requires lots of space(over 50G)
+
+automatically mount point /run/media/ is regarded as not good by yocto sanity checker
+
+fix: manually mount it to another point for example mount /dev/sdb4 labia
+
+
+
+# checkout yocto
+
+git clone -b dunfell git://git.yoctoproject.org/poky.git
+
+
+
+# yocto info shows currently we only need to install very few packages on manjaro
+
+sudo pacman -S chrpath cpio diffstat rpcsvc-proto
+
+rpcsvc-proto contains rpcgen
+
+
+
+# parallelism halt the computer when comiling binutils and gcc
+
+this has been experienced when compiling linux from scratch
+
+yocto use 8 threads which is the number of cores host machine has
+
+https://community.nxp.com/t5/i-MX-Processors/How-can-I-reduce-the-number-of-parallel-yocto-builds/m-p/1068773
+
+fix: edit [your_yocto_build_dir]/conf/local.conf adding the following lines
+
+BB_NUMBER_THREADS = "4"
+PARALLEL_MAKE = "-j 4"
+
+
+
+
+# restart computer and continue from where we left
+
+but there are linking error "undefined references ***"
+
+binutils and gcc need to be rebuilt
+
+run this command to clean the state of the 2 tasks: bitbake -c cleansstate binutils gcc
+
+
+https://stackoverflow.com/questions/36452798/yocto-rebuild-part-of-project
+
+
+
+
+# run build command as usual
+
+
+
+# about the new releas of yocto
+
+Great Langdale
+
+the meaning of langdale: https://en.wikipedia.org/wiki/Great_Langdale
+
+and also from google search
+
+long valley
+
+Langdale Name Meaning
+
+The placename means 'long valley' from the Old English lang + dæl or Old Norse langr + dalr. 
+Possibly an Americanized form of Norwegian Langdal Langdalen Langdahl habitational names 
+from any of numerous farmsteads named Langdal(en) having the same etymology as 1 above.
+
+
+the meaning of fell: from google search
+
+a hill or stretch of high moorland, especially in northern England.
+"Cross Fell"
+
+adjective: fell
+
+    of terrible evil or ferocity; deadly.
+    "sorcerers use spells to achieve their fell ends"
+
+Phrases
+in one fell swoop — all at one time.
+"nothing can topple the government in one fell swoop"
+
+
+
+
